@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "bpcl-contact-us-client-side-solution",
+    "id": "691daac3-89ac-428f-bc86-882e40f655cf",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.21.1"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "BPCL-Contact-US description"
+      },
+      "longDescription": {
+        "default": "BPCL-Contact-US description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "bpcl-contact-us Feature",
+        "description": "The feature that activates elements of the bpcl-contact-us solution.",
+        "id": "6f6dc74c-7314-46d1-964a-24f9219b4cd0",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/bpcl-contact-us.sppkg"
+  }
+}

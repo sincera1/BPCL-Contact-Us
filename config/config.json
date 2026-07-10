@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "bpcl-contact-us-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/bpclContactUs/BpclContactUsWebPart.js",
+          "manifest": "./src/webparts/bpclContactUs/BpclContactUsWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "BpclContactUsWebPartStrings": "lib/webparts/bpclContactUs/loc/{locale}.js"
+  }
+}
