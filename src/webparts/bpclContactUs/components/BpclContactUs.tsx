@@ -7,7 +7,7 @@ import "@fontsource/inter/500.css";
 import "@fontsource/inter/600.css";
 import "@fontsource/inter/700.css";
 import styles from "./BpclContactUs.module.scss";
-import PopupModal from '../Services/PopupModal';
+
 
 import type { SPFI } from "@pnp/sp";
 import BpclContactUsServices, { ISubject } from "../Services/BpclContactUsServices";
@@ -21,9 +21,8 @@ const BpclContactUs: React.FC<IBpclContactUsProps> = ({ sp }) => {
   const [subjects, setSubjects] = React.useState<ISubject[]>([]);
   const [selectedSubject, setSelectedSubject] = React.useState<string>("");
   const [query, setQuery] = React.useState<string>("");
-  const [showPopup, setShowPopup] = React.useState(false);
-  const [popupType, setPopupType] = React.useState<"success" | "danger" | "confirm">("success");
-  const [popupMessage, setPopupMessage] = React.useState("");
+  const [errorMessage, setErrorMessage] = React.useState("");
+  const [successMessage, setSuccessMessage] = React.useState("");
 
   const service = React.useMemo(() => {
     return new BpclContactUsServices(sp);
@@ -52,22 +51,16 @@ const BpclContactUs: React.FC<IBpclContactUsProps> = ({ sp }) => {
 
     try {
 
+      setErrorMessage("");
+
       if (!selectedSubject) {
-
-        setPopupType("danger");
-        setPopupMessage("Please select a subject.");
-        setShowPopup(true);
+        setErrorMessage("Please select a subject.");
         return;
-
       }
 
       if (!query.trim()) {
-
-        setPopupType("danger");
-        setPopupMessage("Please enter your query.");
-        setShowPopup(true);
+        setErrorMessage("Please enter your query.");
         return;
-
       }
 
       const selectedItem = subjects.find(
@@ -75,12 +68,8 @@ const BpclContactUs: React.FC<IBpclContactUsProps> = ({ sp }) => {
       );
 
       if (!selectedItem || !selectedItem.SME) {
-
-        setPopupType("danger");
-        setPopupMessage("SME is not configured for the selected subject.");
-        setShowPopup(true);
+        setErrorMessage("SME is not configured for the selected subject.");
         return;
-
       }
 
       await service.saveContactQuery(
@@ -89,20 +78,18 @@ const BpclContactUs: React.FC<IBpclContactUsProps> = ({ sp }) => {
         query
       );
 
-      setPopupType("success");
-      setPopupMessage("Your query has been submitted successfully.");
-      setShowPopup(true);
+      setSuccessMessage("success");
 
-      setSelectedSubject("");
-      setQuery("");
+      setTimeout(() => {
+        setSuccessMessage("");
+        setSelectedSubject("");
+        setQuery("");
+      }, 10000);
 
     } catch (error) {
 
       console.error(error);
-
-      setPopupType("danger");
-      setPopupMessage("Something went wrong while submitting your query.");
-      setShowPopup(true);
+      setErrorMessage("Something went wrong while submitting your query.");
 
     }
 
@@ -128,94 +115,144 @@ const BpclContactUs: React.FC<IBpclContactUsProps> = ({ sp }) => {
 
           <Row className="align-items-center">
 
-            {/* Left */}
+            {!successMessage ? (
 
-            <Col lg={6} md={12}>
+              <>
 
-              <h2>
-                Ask Our <span>Experts</span> Today
-              </h2>
+                {/* Left */}
 
-              <p>
-                Provide a subject and your query, and our experts will
-                respond as soon as possible.
-              </p>
+                <Col lg={6} md={12}>
 
-              <div className={styles.line} />
+                  <h2>
+                    Ask Our <span>Experts</span> Today
+                  </h2>
 
-              <Form>
+                  <p>
+                    Provide a subject and your query, and our experts
+                    will respond as soon as possible.
+                  </p>
 
-                <Form.Group className="mb-4">
+                  <div className={styles.line} />
 
-                  <Form.Label>Select a Subject</Form.Label>
+                  <Form>
 
-                  <Form.Select
-                    value={selectedSubject}
-                    onChange={(e) => setSelectedSubject(e.target.value)}
-                  >
-                    <option value="">Select</option>
+                    <Form.Group className="mb-4">
 
-                    {subjects.map((item) => (
-                      <option
-                        key={item.Id}
-                        value={item.Id}
+                      <Form.Label>Select a Subject</Form.Label>
+
+                      <Form.Select
+                        value={selectedSubject}
+                        onChange={(e) => setSelectedSubject(e.target.value)}
                       >
-                        {item.Subject}
-                      </option>
-                    ))}
+                        <option value="">Select</option>
 
-                  </Form.Select>
+                        {subjects.map((item) => (
+                          <option
+                            key={item.Id}
+                            value={item.Id}
+                          >
+                            {item.Subject}
+                          </option>
+                        ))}
 
-                </Form.Group>
+                      </Form.Select>
 
-                <Form.Group className="mb-4">
+                    </Form.Group>
 
-                  <Form.Label>Enter your Query here</Form.Label>
+                    <Form.Group className="mb-4">
 
-                  <Form.Control
-                    as="textarea"
-                    rows={6}
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
+                      <Form.Label>Enter your Query here</Form.Label>
+
+                      <Form.Control
+                        as="textarea"
+                        rows={6}
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                      />
+
+                    </Form.Group>
+
+                    {errorMessage && (
+                      <div className={styles.errorMessage}>
+                        {errorMessage}
+                      </div>
+                    )}
+
+                    <Button
+                      className={styles.submitBtn}
+                      type="button"
+                      onClick={handleSubmit}
+                    >
+                      Submit
+                    </Button>
+
+                  </Form>
+
+                </Col>
+
+                {/* Right */}
+
+                <Col lg={6} md={12} className="text-center">
+
+                  <img
+                    src={require("../assets/contact.jpg")}
+                    className={styles.sideImage}
+                    alt="Contact Us"
                   />
 
-                </Form.Group>
+                </Col>
 
-                <Button
-                  className={styles.submitBtn}
-                  type="button"
-                  onClick={handleSubmit}
-                >
-                  Submit
-                </Button>
+              </>
 
-              </Form>
+            ) : (
 
-            </Col>
+              <Col xs={12}>
 
-            {/* Right */}
+                <div className={styles.successContainer}>
 
-            <Col lg={6} md={12} className="text-center">
+                  <div className={styles.successCircle}>
+                    <i className="bi bi-check-lg"></i>
+                  </div>
 
-              <img
-                src={require("../assets/contact.jpg")}
-                className={styles.sideImage}
-                alt="Contact Us"
-              />
+                  <h2>Thank You!</h2>
 
-            </Col>
+                  <h5>Your query has been submitted successfully.</h5>
+
+                  <div className={styles.successDivider}>
+                    <span>
+                      <i className="bi bi-headset"></i>
+                    </span>
+                  </div>
+
+                  <h4>Our expert will respond to you soon.</h4>
+
+                  <p>
+                    We appreciate you reaching out to us.
+                    <br />
+                    Our team will review your query and get back to you
+                    at the earliest.
+                  </p>
+
+                  <Button
+                    variant="outline-primary"
+                    onClick={() => {
+                      window.location.href = "/sites/dev-iconnect-final"; 
+                    }}
+                  >
+                    <i className="bi bi-house-door me-2"></i>
+                    Back
+                  </Button>
+
+                </div>
+
+              </Col>
+
+            )}
 
           </Row>
 
         </div>
       </Container>
-
-      <PopupModal
-        show={showPopup}
-        type={popupType}
-        message={popupMessage}
-        onClose={() => setShowPopup(false)}
-      />
 
     </div>
   );
